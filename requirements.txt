@@ -213,7 +213,8 @@ ptyprocess==0.7.0
 # API / WEB APPLICATION
 # ============================================================
 
-fastapi==0.115.2
+fastapi==0.140.0
+
 
 # Modern Python web framework for building APIs.
 # Can expose the trained churn model through REST API endpoints.
@@ -224,7 +225,8 @@ uvicorn==0.30.5
 # Example:
 # uvicorn api:app --host 0.0.0.0 --port 8000
 
-starlette==0.38.6
+starlette==1.6.0
+
 # Lightweight ASGI framework underneath FastAPI.
 # Provides routing, middleware, request/response handling, etc.
 
