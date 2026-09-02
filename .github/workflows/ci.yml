@@ -1,19 +1,36 @@
-name: Build and Push to Docker Hub
+name: Build and Push Telco Churn Docker Image
 
 on:
   push:
-    branches: [main]  # Only trigger on main branch pushes
+    branches:
+      - main
 
 jobs:
   build-and-push:
+    name: Build and Push Telco Churn Image
     runs-on: ubuntu-latest
 
     steps:
+
+      # ============================================================
+      # 1. CHECKOUT PROJECT
+      # ============================================================
+
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx # modern Docker builder that supports multi-platform builds
+
+      # ============================================================
+      # 2. SETUP DOCKER BUILDX
+      # ============================================================
+
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+
+      # ============================================================
+      # 3. LOGIN TO DOCKER HUB
+      # ============================================================
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -21,10 +38,29 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+
+      # ============================================================
+      # 4. BUILD AND PUSH DOCKER IMAGE
+      # ============================================================
+
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./dockerfile  # change if your Dockerfile has a different name or path
+          file: ./dockerfile
           push: true
-          tags: anasriad8/telco-fastapi:latest
+
+          # Docker Hub repository
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/telco-fastapi:latest
+
+          # GitHub Actions Docker layer cache
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+
+      # ============================================================
+      # 5. LOGOUT FROM DOCKER HUB
+      # ============================================================
+
+      - name: Logout from Docker Hub
+        run: docker logout
