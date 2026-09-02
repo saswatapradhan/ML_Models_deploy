@@ -213,7 +213,8 @@ ptyprocess==0.7.0
 # API / WEB APPLICATION
 # ============================================================
 
-fastapi==0.115.0
+fastapi==0.115.2
+
 # Modern Python web framework for building APIs.
 # Can expose the trained churn model through REST API endpoints.
 
