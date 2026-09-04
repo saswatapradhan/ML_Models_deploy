@@ -402,6 +402,42 @@ def main(args):
         mlflow.log_metric("recall", recall)
         mlflow.log_metric("f1", f1)
         mlflow.log_metric("roc_auc", roc_auc)
+        # ====================================================
+        # LOG METRICS
+        # ====================================================
+
+        mlflow.log_metric("precision", precision)
+        mlflow.log_metric("recall", recall)
+        mlflow.log_metric("f1", f1)
+        mlflow.log_metric("roc_auc", roc_auc)
+
+        # ====================================================
+        # SAVE MODEL METRICS ARTIFACT
+        # ====================================================
+
+        metrics_file = artifacts_dir / "metrics.json"
+
+        metrics = {
+            "precision": precision,
+            "recall": recall,
+            "f1": f1,
+            "roc_auc": roc_auc
+        }
+
+        with open(metrics_file, "w", encoding="utf-8") as f:
+            json.dump(metrics, f, indent=2)
+
+        print(f"Model metrics saved: {metrics_file}")
+
+        # ====================================================
+        # PRINT METRICS
+        # ====================================================
+
+        print("🎯 Model Performance:")
+        print(f"   Precision : {precision:.3f}")
+        print(f"   Recall    : {recall:.3f}")
+        print(f"   F1 Score  : {f1:.3f}")
+        print(f"   ROC AUC   : {roc_auc:.3f}")
 
         # ====================================================
         # PRINT METRICS
