@@ -10,29 +10,21 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 METRICS_FILE = PROJECT_ROOT / "artifacts" / "metrics.json"
-
-
-# Current production baseline
-BASELINE_METRICS = {
-    "precision": 0.4968051118210863,
-    "recall": 0.8315508021390374,
-    "f1": 0.622,
-    "roc_auc": 0.837146400062001,
-}
+BASELINE_FILE = PROJECT_ROOT / "config" / "model_baseline.json"
 
 
 # ============================================================
-# LOAD METRICS
+# LOAD JSON FILE
 # ============================================================
 
-def load_metrics():
+def load_json(file_path):
 
-    if not METRICS_FILE.exists():
+    if not file_path.exists():
         print("❌ QUALITY GATE FAILED")
-        print(f"Metrics file not found: {METRICS_FILE}")
+        print(f"File not found: {file_path}")
         sys.exit(1)
 
-    with open(METRICS_FILE, "r", encoding="utf-8") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -40,18 +32,19 @@ def load_metrics():
 # QUALITY GATE
 # ============================================================
 
-def run_quality_gate(metrics):
+def run_quality_gate(metrics, baseline):
 
     print("=" * 70)
     print("MODEL QUALITY GATE")
     print("=" * 70)
 
-    print(f"Metrics file: {METRICS_FILE}")
+    print(f"Metrics file : {METRICS_FILE}")
+    print(f"Baseline file: {BASELINE_FILE}")
     print()
 
     gate_passed = True
 
-    for metric_name, baseline_value in BASELINE_METRICS.items():
+    for metric_name, baseline_value in baseline.items():
 
         actual_value = metrics.get(metric_name)
 
@@ -95,8 +88,9 @@ def run_quality_gate(metrics):
 
 if __name__ == "__main__":
 
-    metrics = load_metrics()
+    metrics = load_json(METRICS_FILE)
+    baseline = load_json(BASELINE_FILE)
 
-    exit_code = run_quality_gate(metrics)
+    exit_code = run_quality_gate(metrics, baseline)
 
     sys.exit(exit_code)
