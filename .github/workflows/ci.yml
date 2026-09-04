@@ -21,7 +21,36 @@ jobs:
 
 
       # ============================================================
-      # 2. SETUP DOCKER BUILDX
+      # 2. SETUP PYTHON
+      # ============================================================
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+
+      # ============================================================
+      # 3. INSTALL PYTHON DEPENDENCIES
+      # ============================================================
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+
+      # ============================================================
+      # 4. RUN PYTEST
+      # ============================================================
+
+      - name: Run tests
+        run: |
+          python -m pytest -v
+
+
+      # ============================================================
+      # 5. SETUP DOCKER BUILDX
       # ============================================================
 
       - name: Set up Docker Buildx
@@ -29,7 +58,7 @@ jobs:
 
 
       # ============================================================
-      # 3. LOGIN TO DOCKER HUB
+      # 6. LOGIN TO DOCKER HUB
       # ============================================================
 
       - name: Log in to Docker Hub
@@ -40,7 +69,7 @@ jobs:
 
 
       # ============================================================
-      # 4. BUILD AND PUSH DOCKER IMAGE
+      # 7. BUILD AND PUSH DOCKER IMAGE
       # ============================================================
 
       - name: Build and push Docker image
@@ -59,7 +88,7 @@ jobs:
 
 
       # ============================================================
-      # 5. LOGOUT FROM DOCKER HUB
+      # 8. LOGOUT FROM DOCKER HUB
       # ============================================================
 
       - name: Logout from Docker Hub
