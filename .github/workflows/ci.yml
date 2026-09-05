@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-push:
-    name: Build and Push Telco Churn Image
+    name: Build, Test and Push Telco Churn Image
     runs-on: ubuntu-latest
 
     steps:
@@ -41,7 +41,18 @@ jobs:
 
 
       # ============================================================
-      # 4. RUN PYTEST
+      # 4. DOWNLOAD CI DATASET
+      # ============================================================
+
+      - name: Download Telco dataset
+        run: |
+          mkdir -p data/raw
+          curl -L "https://raw.githubusercontent.com/Giskard-AI/examples/main/datasets/WA_Fn-UseC_-Telco-Customer-Churn.csv" \
+            -o data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+
+
+      # ============================================================
+      # 5. RUN PYTEST
       # ============================================================
 
       - name: Run tests
@@ -50,7 +61,26 @@ jobs:
 
 
       # ============================================================
-      # 5. SETUP DOCKER BUILDX
+      # 6. RUN ML PIPELINE
+      # ============================================================
+
+      - name: Run ML pipeline
+        run: |
+          python scripts/run_pipeline.py \
+            --input "data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv"
+
+
+      # ============================================================
+      # 7. RUN MODEL QUALITY GATE
+      # ============================================================
+
+      - name: Run model quality gate
+        run: |
+          python scripts/model_quality_gate.py
+
+
+      # ============================================================
+      # 8. SETUP DOCKER BUILDX
       # ============================================================
 
       - name: Set up Docker Buildx
@@ -58,7 +88,7 @@ jobs:
 
 
       # ============================================================
-      # 6. LOGIN TO DOCKER HUB
+      # 9. LOGIN TO DOCKER HUB
       # ============================================================
 
       - name: Log in to Docker Hub
@@ -69,7 +99,7 @@ jobs:
 
 
       # ============================================================
-      # 7. BUILD AND PUSH DOCKER IMAGE
+      # 10. BUILD AND PUSH DOCKER IMAGE
       # ============================================================
 
       - name: Build and push Docker image
@@ -88,7 +118,7 @@ jobs:
 
 
       # ============================================================
-      # 8. LOGOUT FROM DOCKER HUB
+      # 11. LOGOUT FROM DOCKER HUB
       # ============================================================
 
       - name: Logout from Docker Hub
